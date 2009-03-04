@@ -1,14 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 """
-¥Ë¥å¡¼¥é¥ë¥Í¥Ã¥È¥ï¡¼¥¯¤Î¸íº¹µÕÅÁÇÅ¥â¥Ç¥ë
+ãƒ‹ãƒ¥ãƒ¼ãƒ©ãƒ«ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®èª¤å·®é€†ä¼æ’­ãƒ¢ãƒ‡ãƒ«
 
- 11/01 pickle ¤Ç¤Ê¤¼¤« weight_* ¤È train_* ¤ÎÃæ¿È¤¬ÊİÂ¸¤µ¤ì¤Ê¤¤¡¥²¿¤Ç?
+ 11/01 pickle ã§ãªãœã‹ weight_* ã¨ train_* ã®ä¸­èº«ãŒä¿å­˜ã•ã‚Œãªã„ï¼ä½•ã§?
 
- 10/22 sigmod_table ¤ò»È¤ï¤Ê¤¤¤è¤¦¤ËÊÑ¹¹
-       ¤³¤ì¤ò»È¤¦¤ÈÅÓÃæ¤«¤é³Ø½¬¤¬¿Ê¤Ş¤Ê¤¯¤Ê¤ë¤«¤é
+ 10/22 sigmod_table ã‚’ä½¿ã‚ãªã„ã‚ˆã†ã«å¤‰æ›´
+       ã“ã‚Œã‚’ä½¿ã†ã¨é€”ä¸­ã‹ã‚‰å­¦ç¿’ãŒé€²ã¾ãªããªã‚‹ã‹ã‚‰
 """
 
-__author__ = "mfujisa"
-
+__author__ = "mjmania"
 
 import string
 import random
@@ -31,7 +32,7 @@ class BPNNetwork:
 
     print_frequency = 0
 
-    # Äê¿ô
+    # å®šæ•°
     TABLE_SIZE = 100
     RAND_MAX = 100
     ERROR_THRESHOLD = 0.01
@@ -53,10 +54,10 @@ class BPNNetwork:
         self.num_output = num_output
         self.gain = gain
 
-        # sigmoid ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
+        # sigmoid ãƒ†ãƒ¼ãƒ–ãƒ«ã®ä½œæˆ
 #        self.sigmoid_table = self._make_sigmoid_table()
 
-        # ½Å¤ß½é´üÃÍ¤ÎÀßÄê (-2¡Á2)
+        # é‡ã¿åˆæœŸå€¤ã®è¨­å®š (-2ã€œ2)
         for i in range(self.num_input+1):
             self.weight_ih.append([4 * random.randint(0, self.RAND_MAX) / \
                                    self.RAND_MAX -2 \
@@ -68,7 +69,7 @@ class BPNNetwork:
                                    for j in range(self.num_output)])
 
     def _make_sigmoid_table(self):
-        """sigmoid ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®"""
+        """sigmoid ãƒ†ãƒ¼ãƒ–ãƒ«ã®ä½œæˆ"""
         table = []
         for i in range(self.TABLE_SIZE):
             table.append(self._sigmoid((i - self.TABLE_SIZE / 2) \
@@ -76,12 +77,12 @@ class BPNNetwork:
         return table
 
     def calc(self, input):
-        """¥Í¥Ã¥È¥ï¡¼¥¯¤Î½ĞÎÏ¤òÊÖ¤¹¡¥³Ø½¬¸å¤Ë»ÈÍÑ¤¹¤ë¡¥"""
+        """ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®å‡ºåŠ›ã‚’è¿”ã™ï¼å­¦ç¿’å¾Œã«ä½¿ç”¨ã™ã‚‹ï¼"""
         self._forward(input)
         return self.net_output
 
     def learn(self):
-        print "³Ø½¬¥¹¥¿¡¼¥È!"
+        print "å­¦ç¿’ã‚¹ã‚¿ãƒ¼ãƒˆ!"
         for ilearn in range(self.num_learn):
             self.max_error = 0
             
@@ -90,10 +91,10 @@ class BPNNetwork:
                 self._eval_error(ilearn, isample)
                 self._back(self.train_output[isample])
 
-            # ¥¨¥é¡¼Î¨¤¬ïçÃÍ°Ê²¼¤Ë¤Ê¤Ã¤¿¤é½ªÎ»
+            # ã‚¨ãƒ©ãƒ¼ç‡ãŒé–¾å€¤ä»¥ä¸‹ã«ãªã£ãŸã‚‰çµ‚äº†
             if (self.max_error < self.ERROR_THRESHOLD):
-                print "³Ø½¬²ó¿ô = %d ¤Ç½ªÎ»" % ilearn
-                print "ºÇÂç¥¨¥é¡¼Î¨ = %f" % self.max_error
+                print "å­¦ç¿’å›æ•° = %d ã§çµ‚äº†" % ilearn
+                print "æœ€å¤§ã‚¨ãƒ©ãƒ¼ç‡ = %f" % self.max_error
                 break
 
     def _sigmoid(self, x, gain):
@@ -109,9 +110,9 @@ class BPNNetwork:
             return self.sigmoid_table[isum]
 
         self.net_input = input[:]
-        self.net_input.append(1.0)  # ïçÃÍÍÑ
+        self.net_input.append(1.0)  # é–¾å€¤ç”¨
 
-        ## ÆşÎÏÁØ¤«¤éÃæ´ÖÁØ¤Ø
+        ## å…¥åŠ›å±¤ã‹ã‚‰ä¸­é–“å±¤ã¸
         ltmp = []
         for j in range(self.num_hidden):
             sum = 0
@@ -120,9 +121,9 @@ class BPNNetwork:
 #            ltmp.append(lookup_table(sum))
             ltmp.append(self._sigmoid(sum, self.gain))
         self.hidden = ltmp
-        self.hidden.append(1.0)  # ïçÃÍÍÑ
+        self.hidden.append(1.0)  # é–¾å€¤ç”¨
 
-        ## Ãæ´ÖÁØ¤«¤é½ĞÎÏÁØ¤Ø
+        ## ä¸­é–“å±¤ã‹ã‚‰å‡ºåŠ›å±¤ã¸
         ltmp = []
         for j in range(self.num_output):
             sum = 0
@@ -133,7 +134,7 @@ class BPNNetwork:
         self.net_output = ltmp
 
     def _eval_error(self, ilearn, isample):
-        # ¸íº¹¤ÎÉ¾²Á
+        # èª¤å·®ã®è©•ä¾¡
         error = 0
         for j in range(self.num_output):
             error = error + \
@@ -143,19 +144,19 @@ class BPNNetwork:
 
         if (self.print_frequency != 0) and \
            (ilearn % self.print_frequency == 0):
-            print "³Ø½¬²ó¿ô = %d, ·±Îı¥Ç¡¼¥¿NO. = %d, ¸íº¹ = %f" % \
+            print "å­¦ç¿’å›æ•° = %d, è¨“ç·´ãƒ‡ãƒ¼ã‚¿NO. = %d, èª¤å·® = %f" % \
                   (ilearn, isample+1, error)
         if (error > self.max_error):
             self.max_error = error
 
     def _back(self, toutput):
-        # ½ĞÎÏÁØÁÇ»Ò¤ÎµÕÅÁÇÅ
+        # å‡ºåŠ›å±¤ç´ å­ã®é€†ä¼æ’­
         output_back = [self.gain *
                        (self.net_output[j] - toutput[j]) * 
                        (1.0 - self.net_output[j]) * self.net_output[j] 
                        for j in range(self.num_output)]
             
-        # ±£¤ìÁØÁÇ»Ò¤ÎµÕÅÁÇÅ
+        # éš ã‚Œå±¤ç´ å­ã®é€†ä¼æ’­
         ltmp = []
         for i in range(self.num_hidden):
             sum = 0
@@ -165,7 +166,7 @@ class BPNNetwork:
                         * self.hidden[i])
         hidden_back = ltmp
 
-        # ½Å¤ß¤Î½¤Àµ
+        # é‡ã¿ã®ä¿®æ­£
         for i in range(self.num_input+1):
             for j in range(self.num_hidden):
                 self.weight_ih[i][j] = self.weight_ih[i][j] - \
@@ -199,11 +200,11 @@ class BPNNetwork:
         self.set_train_data(data)
 
     def print_train_data(self):
-        print "·±Îı¥Ç¡¼¥¿:"
+        print "è¨“ç·´ãƒ‡ãƒ¼ã‚¿:"
         for i in range(len(self.train_input)):
-            print "ÆşÎÏ: ",
+            print "å…¥åŠ›: ",
             print self.train_input[i],
-            print "½ĞÎÏ: ",
+            print "å‡ºåŠ›: ",
             print self.train_output[i]
         print
 
@@ -232,8 +233,8 @@ class BPNNetwork:
 
 
 def restore(filename):
-    """½Å¤ß¤¬ÊİÂ¸¤Ç¤­¤Ê¤¤¤Î¤Ç¡¤ÊÌ¡¹¤Ë¥í¡¼¥É¤¹¤ë¤Î¤¬ÌÌÅİ¡¥
-    ¤Ê¤Î¤Ç¤³¤ì¤Ç°ìµ¤¤Ë¥í¡¼¥É¤·¤Á¤Ş¤¨!"""
+    """é‡ã¿ãŒä¿å­˜ã§ããªã„ã®ã§ï¼Œåˆ¥ã€…ã«ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ã®ãŒé¢å€’ï¼
+    ãªã®ã§ã“ã‚Œã§ä¸€æ°—ã«ãƒ­ãƒ¼ãƒ‰ã—ã¡ã¾ãˆ!"""
 
     file = open(filename)
     bp = pickle.load(file)
@@ -259,9 +260,9 @@ def test():
 
     inputs = [[0, 1, 0], [0, 1, 1]]
     for input in inputs:
-        print "ÆşÎÏ:",
+        print "å…¥åŠ›:",
         print input,
-        print "½ĞÎÏ:",
+        print "å‡ºåŠ›:",
         print bp.calc(input)
 
 #    bp.save("example/test.bp")
